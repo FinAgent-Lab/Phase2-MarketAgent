@@ -9,59 +9,107 @@
 
 ## 🎯 프로젝트 개요
 
-**FinAgent Phase2: Market Agent**는 미국 연방준비제도(Fed)의 거시경제 지표를 분석하여 S&P 500 섹터별 투자 전략을 제시하는 AI 에이전트입니다. LangChain과 LangGraph를 활용한 체계적인 워크플로우를 통해 데이터 수집, 분석, 백테스트, 피드백의 전 과정을 자동화합니다.
+**FinAgent Phase2: Market Agent**는 미국 연방준비제도(Fed)의 거시경제 지표를 종합적으로 분석하여 S&P 500 섹터별 투자 전략을 제시하는 AI 에이전트입니다. LangChain과 LangGraph를 활용한 체계적인 워크플로우를 통해 데이터 수집, 다중 지표 분석, 백테스트, 피드백의 전 과정을 자동화합니다.
 
 ### ✨ 주요 기능
 
-- 🏦 **FRED API 연동**: 미국 기준금리, GDP, 실업률 등 거시경제 지표 실시간 수집
+- 🏦 **FRED API 연동**: 5가지 주요 거시경제 지표 실시간 수집
+  - 기준금리 (Federal Funds Rate)
+  - GDP (국내총생산)
+  - 실업률 (Unemployment Rate)
+  - 비농업 고용자 수 (Non-Farm Payrolls)
+  - CPI (소비자물가지수)
 - 📈 **S&P 500 섹터 분석**: yfinance를 활용한 11개 주요 섹터 데이터 분석
-- 🤖 **AI 기반 투자 추천**: LLM을을 활용한 지능형 섹터 추천
-- 🔄 **자동 백테스트**: 과거 데이터 기반 추천 성과 검증
-- 💡 **피드백 루프**: 백테스트 결과를 반영한 추천 전략 개선
+- 🤖 **다중 지표 기반 AI 추천**: 각 거시경제 지표별 섹터 추천 후 종합 분석
+- 🔄 **자동 백테스트**: 과거 데이터 기반 추천 성과 검증 (최대 5회 반복)
+- 💡 **피드백 루프**: 백테스트 실패 시 자동으로 전략 개선 및 재추천
 - 🎯 **LangGraph 워크플로우**: 체계적인 분석 파이프라인 구축
 
 ## 🏗️ 아키텍처
 
 ```
-┌─────────────────────────────────────────────────────────┐
-│                    LangGraph Workflow                    │
-├─────────────────────────────────────────────────────────┤
-│                                                          │
-│  [START] → [First Analysis] → [Backtest]                │
-│                                      ↓                   │
-│                                 Failed? → [Feedback]     │
-│                                      ↓                   │
-│                                  Success → [END]         │
-│                                                          │
-└─────────────────────────────────────────────────────────┘
-         ↓                            ↓
-    [FRED API]              [Yahoo Finance API]
-    (거시경제 지표)          (섹터별 주가 데이터)
+┌──────────────────────────────────────────────────────────────────┐
+│                      LangGraph Workflow                          │
+├──────────────────────────────────────────────────────────────────┤
+│                                                                   │
+│  [START]                                                          │
+│     ↓                                                             │
+│  [Initialize Data] ← FRED API (5개 거시경제 지표 + 섹터 데이터)  │
+│     ↓                                                             │
+│  [Recommend Sectors] ← 각 지표별 섹터 추천 (5개 분석)             │
+│     ↓                                                             │
+│  [Summarize] ← 5개 추천 결과 종합 분석                            │
+│     ↓                                                             │
+│  [Backtest] ← 현재 시점 데이터로 검증                             │
+│     ↓                                                             │
+│  Success? ──Yes──→ [Final Summary] → [END]                       │
+│     ↓                                                             │
+│    Failed?                                                        │
+│     ↓                                                             │
+│  [Feedback Analysis] (최대 5회 반복)                              │
+│     ↓                                                             │
+│  [Backtest] ← 개선된 전략으로 재검증                              │
+│                                                                   │
+└──────────────────────────────────────────────────────────────────┘
 ```
+
+### 데이터 소스
+
+- **FRED API**: 5가지 거시경제 지표 (기준금리, GDP, 실업률, 비농업 고용, CPI)
+- **Yahoo Finance API**: S&P 500 섹터별 ETF 데이터 (11개 섹터)
 
 ### 📂 프로젝트 구조
 
 ```
 Phase2-MarketAgent/
-├── Agent/                      # AI 에이전트 핵심 로직
-│   ├── Chain/                  # LangChain 체인 구현
-│   │   ├── FredChain.py       # 기준금리 기반 분석 체인
-│   │   ├── GdpChain.py        # GDP 기반 분석 체인
-│   │   └── UnEmployMentChain.py # 실업률 기반 분석 체인
-│   ├── Graph/                  # LangGraph 워크플로우
-│   │   └── FredGraph.py       # 분석-백테스트-피드백 그래프
-│   ├── Prompt/                 # LLM 프롬프트 템플릿
-│   │   └── FredPrompt.py      # 분석/백테스트/피드백 프롬프트
-│   ├── Util/                   # 유틸리티 함수
-│   │   └── util.py            # LLM 생성, 데이터 처리
-│   └── main.py                # 메인 실행 파일
-├── Apis/                       # 외부 API 연동
-│   ├── FredApi.py             # FRED API 래퍼
-│   └── YFinace.py             # Yahoo Finance API 래퍼
-├── requirements.txt            # 프로젝트 의존성
-├── .env.example               # 환경 변수 템플릿
-└── README.md                  # 프로젝트 문서
+├── Agent/                           # AI 에이전트 핵심 로직
+│   ├── Chain/                       # LangChain 체인 구현
+│   │   └── Chains.py               # 통합 체인 모듈 (추천/요약/백테스트/피드백)
+│   ├── Graph/                       # LangGraph 워크플로우
+│   │   └── MacroGraph.py           # 거시경제 분석 그래프 (메인 실행 파일)
+│   ├── MacroData/                   # 거시경제 데이터 수집 모듈
+│   │   ├── FundsRate.py            # 기준금리 데이터
+│   │   ├── GDP.py                  # GDP 데이터
+│   │   ├── UmEmployMent.py         # 실업률 데이터
+│   │   ├── NonFarmPayrolls.py      # 비농업 고용자 수 데이터
+│   │   └── CPI.py                  # 소비자물가지수 데이터
+│   ├── Prompt/                      # LLM 프롬프트 템플릿
+│   │   └── Prompts.py              # 통합 프롬프트 모듈
+│   └── Util/                        # 유틸리티 함수
+│       ├── LLM.py                  # LLM 생성 및 설정
+│       └── Yfinace3moData.py       # 섹터 데이터 처리
+├── Apis/                            # 외부 API 연동
+│   ├── FredApi.py                  # FRED API 래퍼
+│   └── YFinace.py                  # Yahoo Finance API 래퍼
+├── LINKEDIN_POST/                   # 프로젝트 진행 기록
+│   └── LINKEDIN_POST_1012.md       # LinkedIn 포스트
+├── test.ipynb                       # 테스트 및 실험용 노트북
+├── requirements.txt                 # 프로젝트 의존성
+├── LICENSE                          # MIT 라이선스
+└── README.md                        # 프로젝트 문서
 ```
+
+### 🔑 핵심 모듈 설명
+
+#### **MacroGraph.py** (메인 워크플로우)
+- LangGraph를 활용한 전체 분석 파이프라인 정의
+- 데이터 초기화 → 섹터 추천 → 요약 → 백테스트 → 피드백 루프 구현
+- `python Agent/Graph/MacroGraph.py`로 직접 실행 가능
+
+#### **Chains.py** (체인 모듈)
+- `recommend_sectors_chain`: 거시경제 지표 기반 섹터 추천
+- `summarize_data_chain`: 5개 지표 분석 결과 종합
+- `backtest_chain`: 추천 결과 백테스트
+- `feedback_analysis_chain`: 실패 원인 분석 및 개선안 제시
+- `final_summary_chain`: 최종 결과 요약
+
+#### **MacroData/** (데이터 수집)
+각 거시경제 지표별 FRED API 데이터 수집 및 전처리
+- **FundsRate**: 연방기준금리 목표 범위 (상한/하한)
+- **GDP**: 미국 GDP 성장률
+- **UmEmployMent**: 실업률 데이터
+- **NonFarmPayrolls**: 비농업 고용자 수 변화
+- **CPI**: 소비자물가지수 및 전월대비 증가율
 
 ## 🚀 시작하기
 
@@ -116,22 +164,45 @@ OPENROUTER_API_KEY=your_openrouter_api_key_here
 ```
 
 
+## 🎬 실행 방법
+
+
+```
+
 ## 📊 분석 워크플로우
 
-### 1단계: 초기 분석
-- 3개월 전까지의 거시경제 지표 분석
-- 기준금리, GDP, 실업률 등 종합 고려
-- AI가 3개 유망 섹터 추천
+### 1단계: 데이터 초기화 (Initialize Data)
+- FRED API에서 5가지 거시경제 지표 수집 (2008년~현재)
+- yfinance에서 S&P 500 섹터 데이터 수집
+- 3개월 전 시점 데이터 분리 (분석용)
 
-### 2단계: 백테스트
+### 2단계: 섹터 추천 (Recommend Sectors)
+각 거시경제 지표별로 독립적인 섹터 추천 수행:
+1. **기준금리 분석** → 추천 섹터
+2. **GDP 분석** → 추천 섹터
+3. **실업률 분석** → 추천 섹터
+4. **비농업 고용 분석** → 추천 섹터
+5. **CPI 분석** → 추천 섹터
+
+### 3단계: 종합 분석 (Summarize)
+- 5개 지표의 추천 결과를 종합
+- 가장 유망한 3개 섹터 최종 선정
+- 선정 이유 및 전략 제시
+
+### 4단계: 백테스트 (Backtest)
 - 현재 시점까지의 실제 데이터로 검증
 - 추천 섹터의 실제 성과 평가
-- Success/Failed 판정
+- **Success** / **Failed** 판정
 
-### 3단계: 피드백 (Failed 시)
-- 백테스트 실패 원인 분석
+### 5단계: 피드백 루프 (Feedback Analysis)
+백테스트 **Failed** 시:
+- 실패 원인 분석
 - 현재 시장 상황 재평가
 - 개선된 추천 섹터 제시
+- 백테스트 재실행 (최대 5회 반복)
+
+백테스트 **Success** 시:
+- 최종 요약 생성 후 종료
 
 
 ## 🤝 기여하기
