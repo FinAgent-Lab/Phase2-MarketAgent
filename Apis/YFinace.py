@@ -1,5 +1,9 @@
 import yfinance as yf
 import pandas as pd
+import warnings
+
+# FutureWarning 무시
+warnings.filterwarnings('ignore', category=FutureWarning)
 
 # S&P 500 섹터별 ETF 티커
 SP500_SECTOR_ETFS = {
@@ -49,7 +53,7 @@ def get_sp500_sectors_data(period='1y', interval='1d', include_market=True):
         try:
             data = yf.download(ticker, period=period, interval=interval, progress=False)
             sector_data[sector_name] = data
-            print(f"✓ {sector_name} ({ticker}) 데이터 로드 완료")
+            # print(f"✓ {sector_name} ({ticker}) 데이터 로드 완료")
         except Exception as e:
             print(f"✗ {sector_name} ({ticker}) 데이터 로드 실패: {e}")
     

@@ -1,24 +1,5 @@
-import os
 import pandas as pd
-from dotenv import load_dotenv
-from langchain_openai import ChatOpenAI
 from Apis.YFinace import get_sp500_sectors_data
-
-load_dotenv()
-OPENROUTER_API_KEY = os.getenv('OPENROUTER_API_KEY')
-OPENROUTER_BASE_URL = "https://openrouter.ai/api/v1"
-DEFAULT_MODEL="openai/gpt-4o"
-
-
-def create_llm(model: str = DEFAULT_MODEL):
-    
-    llm = ChatOpenAI(
-    api_key=OPENROUTER_API_KEY,
-    base_url=OPENROUTER_BASE_URL,
-    model_name=model,
-    temperature=0,
-    )
-    return llm
 
 
 def yfinance_get_sectors_data(start_year: int) -> pd.DataFrame:
@@ -54,8 +35,3 @@ def yfinance_get_sectors_data(start_year: int) -> pd.DataFrame:
             all_sectors_close[sector_name] = filtered_data[close_columns[0]]
     
     return all_sectors_close 
-
-
-# if __name__ == "__main__":
-#     data = yfinance_get_sectors_data(start_year=2008)
-#     print(data)
