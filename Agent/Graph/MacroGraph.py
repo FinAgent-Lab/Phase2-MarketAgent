@@ -46,8 +46,6 @@ class GraphState(TypedDict):
     NonfarmPayrollsData: pd.DataFrame
     CPIData: pd.DataFrame
     
-
-    
     # 거시경제 기준 섹터 추천 결과
     FundsRateRecommendSectors: dict
     GDPRecommendSectors: dict
