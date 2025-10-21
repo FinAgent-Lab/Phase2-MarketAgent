@@ -119,8 +119,8 @@ Phase2-MarketAgent/
 - Python 3.12
 - [uv](https://docs.astral.sh/uv/) (Python 패키지 관리 도구)
 - FRED API Key ([무료 발급](https://fred.stlouisfed.org/docs/api/api_key.html))
-- OpenRouter API Key (GPT-4o 사용)
-
+- OpenRouter API Key
+  
 ### ⚡ 빠른 시작 (uv 사용)
 
 #### 1️⃣ uv 설치
