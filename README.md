@@ -92,7 +92,7 @@ Phase2-MarketAgent/
 
 - LangGraph를 활용한 전체 분석 파이프라인 정의
 - 데이터 초기화 → 섹터 추천 → 요약 → 백테스트 → 피드백 루프 구현
-- `python Agent/Graph/MacroGraph.py`로 직접 실행 가능
+- `uv run Agent/Graph/MacroGraph.py`로 직접 실행 가능
 
 #### **Chains.py** (체인 모듈)
 
