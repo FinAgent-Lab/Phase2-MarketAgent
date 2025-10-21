@@ -171,7 +171,6 @@ OPENROUTER_API_KEY=your_openrouter_api_key_here
 ### 메인 분석 실행
 
 ```bash
-# uv를 사용하여 실행 (자동으로 의존성 관리 및 가상환경 처리)
 uv run Agent/Graph/MacroGraph.py
 ```
 
