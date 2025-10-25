@@ -160,11 +160,6 @@ cd Phase2-MarketAgent
 uv run main.py
 ```
 
-**접속 주소**
-- **Streamlit 대시보드**: http://localhost:8501
-- **FastAPI 서버**: http://localhost:8000
-
-
 
 > **Note**: `uv`는 Rust 기반 고속 Python 패키지 관리 도구로, 자동으로 가상환경과 의존성을 관리합니다.
 
