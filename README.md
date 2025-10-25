@@ -28,7 +28,7 @@
 ## 🏗️ 아키텍처
 
 ```
-![Uploading 아키텍쳐.png…]()
+<img width="6050" height="2360" alt="아키텍쳐" src="https://github.com/user-attachments/assets/4ddfa98f-56b5-4d60-ac0f-a97048011739" />
 
 
 ```
