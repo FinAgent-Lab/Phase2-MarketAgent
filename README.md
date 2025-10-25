@@ -29,7 +29,7 @@
 
 ### 📊 시스템 전체 구조
 
-![FinAgent Market Agent 아키텍처](아키텍쳐.png)
+![FinAgent Market Agent 아키텍처](architecture.png)
 
 
 ### 데이터 소스
