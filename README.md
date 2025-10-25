@@ -28,29 +28,8 @@
 ## 🏗️ 아키텍처
 
 ```
-┌──────────────────────────────────────────────────────────────────┐
-│                      LangGraph Workflow                          │
-├──────────────────────────────────────────────────────────────────┤
-│                                                                   │
-│  [START]                                                          │
-│     ↓                                                             │
-│  [Initialize Data] ← FRED API (5개 거시경제 지표 + 섹터 데이터)  │
-│     ↓                                                             │
-│  [Recommend Sectors] ← 각 지표별 섹터 추천 (5개 분석)             │
-│     ↓                                                             │
-│  [Summarize] ← 5개 추천 결과 종합 분석                            │
-│     ↓                                                             │
-│  [Backtest] ← 현재 시점 데이터로 검증                             │
-│     ↓                                                             │
-│  Success? ──Yes──→ [Final Summary] → [END]                       │
-│     ↓                                                             │
-│    Failed?                                                        │
-│     ↓                                                             │
-│  [Feedback Analysis] (최대 5회 반복)                              │
-│     ↓                                                             │
-│  [Backtest] ← 개선된 전략으로 재검증                              │
-│                                                                   │
-└──────────────────────────────────────────────────────────────────┘
+<img width="6050" height="2360" alt="image" src="https://github.com/user-attachments/assets/9b522f21-e87c-43f5-aa90-1f1d4d6fe0b4" />
+
 ```
 
 ### 데이터 소스
