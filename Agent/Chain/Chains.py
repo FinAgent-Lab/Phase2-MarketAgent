@@ -26,7 +26,7 @@ def summarize_data_chain(llm, data_package, prompt):
     return result
 
 
-def backtest_chain(llm, summary_data, now_macro_data, now_sector_data, prompt):
+def evaluation_chain(llm, summary_data, now_macro_data, now_sector_data, prompt):
     chain = prompt | llm | backtest_output_parser
     result = chain.invoke({
         "summary_data": summary_data,
@@ -36,11 +36,11 @@ def backtest_chain(llm, summary_data, now_macro_data, now_sector_data, prompt):
     return result
 
 
-def feedback_analysis_chain(llm, summary_data, backtest_response, prompt):
+def feedback_analysis_chain(llm, summary_data, evaluation_response, prompt):
     chain = prompt | llm | feedback_output_parser
     result = chain.invoke({
         "summary_data": summary_data,
-        "backtest_response": backtest_response
+        "evaluation_response": evaluation_response
     })
     return result
 

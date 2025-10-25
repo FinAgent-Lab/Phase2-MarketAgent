@@ -97,7 +97,7 @@ class BacktestOutputSchema(BaseModel):
 backtest_output_parser = JsonOutputParser(pydantic_object=BaseOutputSchema[BacktestOutputSchema])
 
 
-BACKTEST_PROMPT = PromptTemplate.from_template(
+EVALUATION_PROMPT = PromptTemplate.from_template(
     """너는 최고의 미국 주식 시장 분석가입니다. 미국 주식 시장을 한국어로 분석해주세요.
 
     당신에게는 3개월전 데이터로 추천한 S&P500 섹터와 분석내용이 제공됩니다.

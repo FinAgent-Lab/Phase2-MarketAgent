@@ -21,37 +21,16 @@
   - CPI (소비자물가지수)
 - 📈 **S&P 500 섹터 분석**: yfinance를 활용한 11개 주요 섹터 데이터 분석
 - 🤖 **다중 지표 기반 AI 추천**: 각 거시경제 지표별 섹터 추천 후 종합 분석
-- 🔄 **자동 백테스트**: 과거 데이터 기반 추천 성과 검증 (최대 5회 반복)
-- 💡 **피드백 루프**: 백테스트 실패 시 자동으로 전략 개선 및 재추천
-- 🎯 **LangGraph 워크플로우**: 체계적인 분석 파이프라인 구축
+- 🔄 **자동 성과 검증**: 과거 데이터 기반 추천 성과 검증 (최대 5회 반복)
+- 💡 **피드백 루프**: 성과 검증 실패 시 자동으로 전략 개선 및 재추천
+- 🌐 **웹 인터페이스**: FastAPI + Streamlit 기반 사용자 친화적 대시보드
 
 ## 🏗️ 아키텍처
 
-```
-┌──────────────────────────────────────────────────────────────────┐
-│                      LangGraph Workflow                          │
-├──────────────────────────────────────────────────────────────────┤
-│                                                                   │
-│  [START]                                                          │
-│     ↓                                                             │
-│  [Initialize Data] ← FRED API (5개 거시경제 지표 + 섹터 데이터)  │
-│     ↓                                                             │
-│  [Recommend Sectors] ← 각 지표별 섹터 추천 (5개 분석)             │
-│     ↓                                                             │
-│  [Summarize] ← 5개 추천 결과 종합 분석                            │
-│     ↓                                                             │
-│  [Backtest] ← 현재 시점 데이터로 검증                             │
-│     ↓                                                             │
-│  Success? ──Yes──→ [Final Summary] → [END]                       │
-│     ↓                                                             │
-│    Failed?                                                        │
-│     ↓                                                             │
-│  [Feedback Analysis] (최대 5회 반복)                              │
-│     ↓                                                             │
-│  [Backtest] ← 개선된 전략으로 재검증                              │
-│                                                                   │
-└──────────────────────────────────────────────────────────────────┘
-```
+### 📊 시스템 전체 구조
+
+![FinAgent Market Agent 아키텍처](아키텍쳐.png)
+
 
 ### 데이터 소스
 
@@ -64,7 +43,7 @@
 Phase2-MarketAgent/
 ├── Agent/                           # AI 에이전트 핵심 로직
 │   ├── Chain/                       # LangChain 체인 구현
-│   │   └── Chains.py               # 통합 체인 모듈 (추천/요약/백테스트/피드백)
+│   │   └── Chains.py               # 통합 체인 모듈 (추천/요약/성과검증/피드백)
 │   ├── Graph/                       # LangGraph 워크플로우
 │   │   └── MacroGraph.py           # 거시경제 분석 그래프 (메인 실행 파일)
 │   ├── MacroData/                   # 거시경제 데이터 수집 모듈
@@ -81,6 +60,9 @@ Phase2-MarketAgent/
 ├── Apis/                            # 외부 API 연동
 │   ├── FredApi.py                  # FRED API 래퍼
 │   └── YFinace.py                  # Yahoo Finance API 래퍼
+├── InterFace/                       # 웹 애플리케이션 인터페이스
+│   ├── FastAPI.py                  # FastAPI 백엔드 서버
+│   └── Streamlit.py                # Streamlit 프론트엔드 대시보드
 ├── requirements.txt                 # 프로젝트 의존성
 ├── LICENSE                          # MIT 라이선스
 └── README.md                        # 프로젝트 문서
@@ -91,14 +73,14 @@ Phase2-MarketAgent/
 #### **MacroGraph.py** (메인 워크플로우)
 
 - LangGraph를 활용한 전체 분석 파이프라인 정의
-- 데이터 초기화 → 섹터 추천 → 요약 → 백테스트 → 피드백 루프 구현
+- 데이터 초기화 → 섹터 추천 → 요약 → 성과 검증 → 피드백 루프 구현
 - `python Agent/Graph/MacroGraph.py`로 직접 실행 가능
 
 #### **Chains.py** (체인 모듈)
 
 - `recommend_sectors_chain`: 거시경제 지표 기반 섹터 추천
 - `summarize_data_chain`: 5개 지표 분석 결과 종합
-- `backtest_chain`: 추천 결과 백테스트
+- `evaluation_chain`: 추천 결과 성과 검증
 - `feedback_analysis_chain`: 실패 원인 분석 및 개선안 제시
 - `final_summary_chain`: 최종 결과 요약
 
@@ -168,12 +150,21 @@ OPENROUTER_API_KEY=your_openrouter_api_key_here
 
 ## 🎬 실행 방법
 
-### 메인 분석 실행
+### 웹 애플리케이션 실행 (권장)
+
+**FastAPI + Streamlit 웹 인터페이스**
 
 ```bash
-# uv를 사용하여 실행 (자동으로 의존성 관리 및 가상환경 처리)
-uv run Agent/Graph/MacroGraph.py
+# 모든 서버 한 번에 시작
+cd Phase2-MarketAgent
+uv run main.py
 ```
+
+**접속 주소**
+- **Streamlit 대시보드**: http://localhost:8501
+- **FastAPI 서버**: http://localhost:8000
+
+
 
 > **Note**: `uv`는 Rust 기반 고속 Python 패키지 관리 도구로, 자동으로 가상환경과 의존성을 관리합니다.
 
@@ -181,7 +172,7 @@ uv run Agent/Graph/MacroGraph.py
 
 프로그램 실행 시 다음 단계가 자동으로 진행됩니다:
 
-1. **데이터 수집** (2008년~현재)
+1. **데이터 수집**
 
    - FRED API에서 5가지 거시경제 지표 수집
    - yfinance에서 S&P 500 섹터 데이터 수집
@@ -191,20 +182,16 @@ uv run Agent/Graph/MacroGraph.py
 3. **종합 분석**
 
    - 5개 지표 결과를 종합하여 최종 3개 섹터 선정
-4. **백테스트**
+4. **성과 검증**
 
    - 현재 시점까지 데이터로 추천 성과 검증
 5. **피드백 루프** (필요시)
 
-   - 백테스트 실패 시 최대 5회까지 전략 개선 및 재추천
+   - 성과 검증 실패 시 최대 5회까지 전략 개선 및 재추천
 6. **최종 요약**
 
    - 분석 결과 및 투자 전략 출력
 
-### 예상 실행 시간
-
-- 초기 데이터 수집: 약 2-3분
-- 전체 분석 완료: 약 5-10분 (LLM 응답 속도에 따라 변동)
 
 ## 📊 분석 워크플로우
 
@@ -230,7 +217,7 @@ uv run Agent/Graph/MacroGraph.py
 - 가장 유망한 3개 섹터 최종 선정
 - 선정 이유 및 전략 제시
 
-### 4단계: 백테스트 (Backtest)
+### 4단계: 성과 검증 (Evaluation)
 
 - 현재 시점까지의 실제 데이터로 검증
 - 추천 섹터의 실제 성과 평가
@@ -238,26 +225,20 @@ uv run Agent/Graph/MacroGraph.py
 
 ### 5단계: 피드백 루프 (Feedback Analysis)
 
-백테스트 **Failed** 시:
+성과 검증 **Failed** 시:
 
 - 실패 원인 분석
 - 현재 시장 상황 재평가
 - 개선된 추천 섹터 제시
-- 백테스트 재실행 (최대 5회 반복)
+- 성과 검증 재실행 (최대 5회 반복)
 
-백테스트 **Success** 시:
+성과 검증 **Success** 시:
 
 - 최종 요약 생성 후 종료
 
 ## 🤝 기여하기
 
-프로젝트에 기여를 환영합니다! 다음 절차를 따라주세요:
 
-1. Fork the Project
-2. Create your Feature Branch (`git checkout -b feature/AmazingFeature`)
-3. Commit your Changes (`git commit -m 'Add some AmazingFeature'`)
-4. Push to the Branch (`git push origin feature/AmazingFeature`)
-5. Open a Pull Request
 
 ## 📄 라이선스
 

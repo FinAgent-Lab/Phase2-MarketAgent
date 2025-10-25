@@ -56,7 +56,7 @@ class GraphState(TypedDict):
     SummaryResult: dict
     
     # 백테스트 결과
-    BacktestResult: dict
+    EvaluationResult: dict
     
     # 피드백 결과
     FeedbackResult: dict
@@ -150,7 +150,7 @@ def summarize_recommend_data(state: GraphState):
 
 
 
-def run_backtest(state: GraphState):
+def run_evaluation(state: GraphState):
     summary_data = state["SummaryResult"]
 
     now_macro_data_merge = pd.concat(
@@ -164,28 +164,28 @@ def run_backtest(state: GraphState):
         axis=1
     )
 
-    result = backtest_chain(
+    result = evaluation_chain(
         llm=model,
         summary_data=summary_data,
         now_macro_data=now_macro_data_merge,
         now_sector_data=state["SectorData"],
-        prompt=BACKTEST_PROMPT
+        prompt=EVALUATION_PROMPT
     )
 
     return {
-        "BacktestResult": result
+        "EvaluationResult": result
     }
     
     
 def feedback_analysis(state: GraphState):
     summary_data = state["SummaryResult"]
-    backtest_response = state["BacktestResult"]
+    evaluation_response = state["EvaluationResult"]
     iteration_count = state.get("IterationCount", 0)
     
     result = feedback_analysis_chain(
         llm=model,
         summary_data=summary_data,
-        backtest_response=backtest_response,
+        evaluation_response=evaluation_response,
         prompt=FEEDBACK_PROMPT
     )
     
@@ -205,7 +205,7 @@ def should_feedback(state: GraphState) -> str:
     
     # BacktestResult에서 Result 확인
     try:
-        result = state["BacktestResult"]["Content"][0]["Result"]
+        result = state["EvaluationResult"]["Content"][0]["Result"]
         
         if result == "Success":
             return "end"
@@ -223,7 +223,7 @@ def final_summary(state: GraphState):
     # state의 모든 결과를 종합
     result_package = {
         "summary": state.get("SummaryResult", {}),
-        "backtest": state.get("BacktestResult", {}),
+        "backtest": state.get("EvaluationResult", {}),
     }
 
     model = create_llm(model="openai/gpt-5")
@@ -242,16 +242,16 @@ workflow = StateGraph(GraphState)
 workflow.add_node("initialize_data", initialize_data)
 workflow.add_node("recommend_sectors", recommend_sectors)
 workflow.add_node("summarize_recommend_data", summarize_recommend_data)
-workflow.add_node("run_backtest", run_backtest)
+workflow.add_node("run_evaluation", run_evaluation)
 workflow.add_node("feedback_analysis", feedback_analysis)
 workflow.add_node("final_summary", final_summary)
 
 workflow.add_edge(START, "initialize_data")
 workflow.add_edge("initialize_data", "recommend_sectors")
 workflow.add_edge("recommend_sectors", "summarize_recommend_data")
-workflow.add_edge("summarize_recommend_data", "run_backtest")
+workflow.add_edge("summarize_recommend_data", "run_evaluation")
 workflow.add_conditional_edges(
-    "run_backtest",
+    "run_evaluation",
     should_feedback,
     {
         "feedback": "feedback_analysis",
@@ -259,7 +259,7 @@ workflow.add_conditional_edges(
     }
 )
 
-workflow.add_edge("feedback_analysis", "run_backtest")
+workflow.add_edge("feedback_analysis", "run_evaluation")
 workflow.add_edge("final_summary", END)
 
 
@@ -291,9 +291,9 @@ if __name__ == "__main__":
     
     # 디버깅: 백테스트 결과
     print("\n" + "="*60)
-    print("🔍 [DEBUG] 백테스트 결과")
+    print("🔍 [DEBUG] 평가 결과")
     print("="*60)
-    print(result.get("BacktestResult"))
+    print(result.get("EvaluationResult"))
     
     # 최종 결과 출력
     print("\n" + "="*60)
