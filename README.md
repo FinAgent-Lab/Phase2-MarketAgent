@@ -128,8 +128,9 @@ cd Phase2-MarketAgent
 
 # Python 3.12 환경 생성 및 의존성 설치
 uv venv .venv -p 3.12
-uv pip install -r requirements.txt
 source .venv/bin/activate
+uv pip install -r requirements.txt
+
 ```
 
 #### 3️⃣ 환경 변수 설정
