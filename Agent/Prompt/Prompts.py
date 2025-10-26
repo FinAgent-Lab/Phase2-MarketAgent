@@ -4,25 +4,32 @@ from langchain_core.pydantic_v1 import BaseModel, Field
 from typing import List, Dict, TypeVar, Generic
 
 
-
-#----------------------------------------------#
+# ----------------------------------------------#
 # 베이스 스키마 정의
-#----------------------------------------------#
+# ----------------------------------------------#
 
-T = TypeVar('T', bound=BaseModel)
+T = TypeVar("T", bound=BaseModel)
+
 
 class BaseOutputSchema(BaseModel, Generic[T]):
     Content: List[T] = Field(description="결과 내용")
 
-#----------------------------------------------#
+
+# ----------------------------------------------#
 # 첫 번째 분석 프롬프트
-#----------------------------------------------#
+# ----------------------------------------------#
+
 
 class RecommendSectorsOutputSchema(BaseModel):
-    Sectors: List[str]  = Field(description="추천하는 3개의 섹터명 (예: 'Technology', 'Healthcare', 'Financials')")
+    Sectors: List[str] = Field(
+        description="추천하는 3개의 섹터명 (예: 'Technology', 'Healthcare', 'Financials')"
+    )
     Analysis: str = Field(description="섹터 선정 이유 및 분석 내용")
 
-recommend_sectors_output_parser = JsonOutputParser(pydantic_object=BaseOutputSchema[RecommendSectorsOutputSchema])
+
+recommend_sectors_output_parser = JsonOutputParser(
+    pydantic_object=BaseOutputSchema[RecommendSectorsOutputSchema]
+)
 
 
 RECOMMEND_SECTORS_PROMPT = PromptTemplate.from_template(
@@ -59,17 +66,24 @@ RECOMMEND_SECTORS_PROMPT = PromptTemplate.from_template(
 ).partial(format_instructions=recommend_sectors_output_parser.get_format_instructions())
 
 
-#----------------------------------------------#
+# ----------------------------------------------#
 # 요약 프롬프트
-#----------------------------------------------#
+# ----------------------------------------------#
+
 
 class SummaryOutputSchema(BaseModel):
-    MacroData: str = Field(description="거시경제 데이터(예시: 미국 기준금리, 미국 실업률, 미국 GDP 등)")
+    MacroData: str = Field(
+        description="거시경제 데이터(예시: 미국 기준금리, 미국 실업률, 미국 GDP 등)"
+    )
     DataAnalysis: str = Field(description="거시경제 데이터 분석 내용")
-    RecommendSectors: str = Field(description="추천하는 3개의 섹터명 (예: 'Technology', 'Healthcare', 'Financials')")
+    RecommendSectors: str = Field(
+        description="추천하는 3개의 섹터명 (예: 'Technology', 'Healthcare', 'Financials')"
+    )
 
 
-summary_output_parser = JsonOutputParser(pydantic_object=BaseOutputSchema[SummaryOutputSchema])
+summary_output_parser = JsonOutputParser(
+    pydantic_object=BaseOutputSchema[SummaryOutputSchema]
+)
 
 
 SUMMARY_PROMPT = PromptTemplate.from_template(
@@ -84,9 +98,9 @@ SUMMARY_PROMPT = PromptTemplate.from_template(
     {format_instructions}
     """
 ).partial(format_instructions=summary_output_parser.get_format_instructions())
-#----------------------------------------------#
+# ----------------------------------------------#
 # 백테스트 분석 프롬프트
-#----------------------------------------------#
+# ----------------------------------------------#
 
 
 class BacktestOutputSchema(BaseModel):
@@ -94,7 +108,9 @@ class BacktestOutputSchema(BaseModel):
     Feedback: str = Field(description="분석 내용")
 
 
-backtest_output_parser = JsonOutputParser(pydantic_object=BaseOutputSchema[BacktestOutputSchema])
+backtest_output_parser = JsonOutputParser(
+    pydantic_object=BaseOutputSchema[BacktestOutputSchema]
+)
 
 
 EVALUATION_PROMPT = PromptTemplate.from_template(
@@ -136,19 +152,21 @@ EVALUATION_PROMPT = PromptTemplate.from_template(
 ).partial(format_instructions=backtest_output_parser.get_format_instructions())
 
 
-
-
-
-#----------------------------------------------#
+# ----------------------------------------------#
 # 피드백 분석 프롬프트
-#----------------------------------------------#
+# ----------------------------------------------#
+
 
 class FeedbackOutputSchema(BaseModel):
-    Sectors: str = Field(description="추천하는 3개의 섹터명 (예: 'Technology', 'Healthcare', 'Financials')")
+    Sectors: str = Field(
+        description="추천하는 3개의 섹터명 (예: 'Technology', 'Healthcare', 'Financials')"
+    )
     Analysis: str = Field(description="섹터 선정 이유 및 분석 내용")
 
 
-feedback_output_parser = JsonOutputParser(pydantic_object=BaseOutputSchema[FeedbackOutputSchema])
+feedback_output_parser = JsonOutputParser(
+    pydantic_object=BaseOutputSchema[FeedbackOutputSchema]
+)
 
 
 FEEDBACK_PROMPT = PromptTemplate.from_template(
@@ -174,7 +192,6 @@ FEEDBACK_PROMPT = PromptTemplate.from_template(
     {format_instructions}
     """
 ).partial(format_instructions=feedback_output_parser.get_format_instructions())
-
 
 
 final_summary_output_parser = StrOutputParser()
