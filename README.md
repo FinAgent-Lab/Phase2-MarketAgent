@@ -29,7 +29,7 @@
 
 ### 📊 시스템 전체 구조
 
-![FinAgent Market Agent 아키텍처](architecture.png)
+![FinAgent Market Agent 아키텍처](docs/image/architecture.png)
 
 
 ### 데이터 소스
@@ -159,7 +159,11 @@ OPENROUTER_API_KEY=your_openrouter_api_key_here
 cd Phase2-MarketAgent
 uv run main.py
 ```
+### 📊 최종 출력 형태
 
+![최종 분석 요약](docs/image/output1.png)
+
+![지표별 섹터 추천](docs/image/output2.png)
 
 ### 실행 과정
 
