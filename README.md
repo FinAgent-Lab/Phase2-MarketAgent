@@ -127,8 +127,14 @@ git clone https://github.com/Pseudo-Lab/FinAgent-Phase2-MarketAgent.git
 cd Phase2-MarketAgent
 
 # Python 3.12 환경 생성 및 의존성 설치
-uv venv --python 3.12
+uv venv .venv -p 3.12
+
+source .venv/bin/activate  # Linux/Mac
+# 또는
+.venv\Scripts\activate     # Windows
+
 uv sync
+
 ```
 
 #### 3️⃣ 환경 변수 설정

@@ -4,20 +4,17 @@ from dateutil.relativedelta import relativedelta
 
 
 def get_unemployment_rate(fred) -> pd.DataFrame:
-    
+
     RECENT_YEARS = 5
 
-    unemployment_data = fred.get_series('UNRATE')
+    unemployment_data = fred.get_series("UNRATE")
 
     end_date = datetime.now()
     start_date = end_date - relativedelta(years=RECENT_YEARS)
-    
-    result = unemployment_data[start_date:]
-    
-    return pd.DataFrame({
-        f'최근{RECENT_YEARS}년간 미국실업률': result
-    })
 
+    result = unemployment_data[start_date:]
+
+    return pd.DataFrame({f"최근{RECENT_YEARS}년간 미국실업률": result})
 
 
 # if __name__ == "__main__":
