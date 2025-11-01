@@ -133,7 +133,7 @@ source .venv/bin/activate  # Linux/Mac
 # 또는
 .venv\Scripts\activate     # Windows
 
-uv pip install -r requirements.txt
+uv sync
 
 ```
 
@@ -251,7 +251,11 @@ uv run main.py
 
 **Pseudo Lab - FinAgent Team**
 
-프로젝트 팀장: 손봉균
+빌더 : 황윤희  
+Market team 팀장 : 손봉균  
+러너 : 강동석, 김가영, 김민섭, 허수영  
+
+[![Contributors](https://contrib.rocks/image?repo=FinAgent-Lab/Phase2-MarketAgent)](https://github.com/FinAgent-Lab/Phase2-MarketAgent/graphs/contributors)
 
 ---
 
