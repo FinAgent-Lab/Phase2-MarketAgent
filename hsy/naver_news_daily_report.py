@@ -329,6 +329,8 @@ def write_report(
     model_name: str = "tngtech/deepseek-r1t2-chimera:free",
     openrouter_url: str = "https://openrouter.ai/api/v1",
     show_stats: bool = False,
+    categorize_revision: str = "REV00",
+    build_revision: str = "REV00",
 ) -> None:
     """
     한 날짜(date)에 대해 데일리 리포트를 생성하고 파일로 저장.
@@ -350,7 +352,12 @@ def write_report(
         temperature=0,
     )
 
-    app = build_graph(llm=llm, llm_categorizer=llm_categorizer)
+    app = build_graph(
+        llm=llm,
+        llm_categorizer=llm_categorizer,
+        categorize_revision=categorize_revision,
+        build_revision=build_revision,
+    )
 
     initial_state: NewsState = {
         "query": query,
@@ -381,4 +388,6 @@ if __name__ == "__main__":
         model_name="tngtech/deepseek-r1t2-chimera:free",
         openrouter_url="https://openrouter.ai/api/v1",
         show_stats=True, # 통계는 필요하면 True
+        categorize_revision="REV00",
+        build_revision="REV00",
     )
