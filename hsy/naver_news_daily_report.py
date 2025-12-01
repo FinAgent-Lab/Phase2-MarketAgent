@@ -109,7 +109,7 @@ def make_filter_by_date_and_macro_node() -> Any:
     return filter_by_date_and_macro_node
 
 
-def make_categorize_news_node(llm_categorizer: ChatOpenAI) -> Any:
+def make_categorize_news_node(llm_categorizer: ChatOpenAI, revision: str = "REV00") -> Any:
     def categorize_news_node(state: NewsState) -> Dict[str, Any]:
         news_list = state.get("macro_news", [])
         if not news_list:
@@ -126,7 +126,7 @@ def make_categorize_news_node(llm_categorizer: ChatOpenAI) -> Any:
                 }
             )
 
-        system_prompt = load_prompt(PromptKey.CATEGORIZE_NEWS, "REV00")
+        system_prompt = load_prompt(PromptKey.CATEGORIZE_NEWS, revision)
         human_prompt = "뉴스 기사 목록:\n" + json.dumps(
             items_for_prompt, ensure_ascii=False, indent=2
         )
@@ -164,7 +164,7 @@ def make_categorize_news_node(llm_categorizer: ChatOpenAI) -> Any:
     return categorize_news_node
 
 
-def make_build_markdown_report_node(llm: ChatOpenAI) -> Any:
+def make_build_markdown_report_node(llm: ChatOpenAI, revision: str = "REV00") -> Any:
     def build_markdown_report_node(state: NewsState) -> Dict[str, Any]:
         categorized = state.get("categorized_news", {}) or {}
         query = state.get("query", "")
@@ -212,7 +212,7 @@ def make_build_markdown_report_node(llm: ChatOpenAI) -> Any:
                     joined_articles = "\n".join(article_lines)
 
                     prompt_template = load_prompt(
-                        PromptKey.BUILD_MACRO_REPORT, "REV00"
+                        PromptKey.BUILD_MACRO_REPORT, revision
                     )
                     prompt = prompt_template.format(
                         major=major,
@@ -236,14 +236,19 @@ def make_build_markdown_report_node(llm: ChatOpenAI) -> Any:
 # -------------------------------------------------------------------
 # 4. 그래프 빌드 함수
 # -------------------------------------------------------------------
-def build_graph(llm: ChatOpenAI, llm_categorizer: ChatOpenAI):
+def build_graph(
+    llm: ChatOpenAI,
+    llm_categorizer: ChatOpenAI,
+    categorize_revision: str = "REV00",
+    build_revision: str = "REV00"
+):
     workflow = StateGraph(NewsState)
 
     # 노드 생성 (클로저로 llm 주입)
     search_news = make_search_news_node()
     filter_by_date_and_macro = make_filter_by_date_and_macro_node()
-    categorize_news = make_categorize_news_node(llm_categorizer)
-    build_markdown_report = make_build_markdown_report_node(llm)
+    categorize_news = make_categorize_news_node(llm_categorizer, categorize_revision)
+    build_markdown_report = make_build_markdown_report_node(llm, build_revision)
 
     workflow.add_node("search_news", search_news)
     workflow.add_node("filter_by_date_and_macro", filter_by_date_and_macro)

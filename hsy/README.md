@@ -64,6 +64,7 @@ Markdown 파일로 저장
 
 `date` 인자를 자동으로 어제 날짜로 설정 가능
 
+# 폴더 구조
 
 ```bash
 project-root/
@@ -77,4 +78,22 @@ project-root/
 │   └── build_macro_report.md
 └── daily_reports/
     └── daily_report_YYYY-MM-DD.md (자동 생성)
+```
+
+
+# 프롬프트 수정 및 신규 추가
+
+prompts 폴더에 있는 프롬프트를 수정할 수 있습니다.
+
+- `categorize_news.md` : 뉴스 분류 프롬프트
+- `build_macro_report.md` : 리포트 생성 프롬프트
+
+프롬프트를 신규 추가할 경우 `prompts/registry.py`에 추가해야 합니다.
+
+```python
+# prompts/registry.py
+PROMPT_REGISTRY = {
+    (PromptKey.CATEGORIZE_NEWS, "REV00"): "categorize_news.md",
+    (PromptKey.BUILD_MACRO_REPORT, "REV00"): "build_macro_report.md",
+}
 ```
