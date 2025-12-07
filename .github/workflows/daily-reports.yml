@@ -54,7 +54,9 @@ jobs:
           NAVER_CLIENT_SECRET: ${{ secrets.NAVER_CLIENT_SECRET }}
           NAVER_CLIENT_ID: ${{ secrets.NAVER_CLIENT_ID }}
           OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
-        run: uv run main.py
+        run: |
+          yesterday=$(date -d "yesterday" +%Y-%m-%d)
+          uv run main.py --date $yesterday
 
       - name: Upload report artifacts
         if: always()
