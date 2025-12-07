@@ -5,7 +5,6 @@ on:
     # 테스트용: 10분마다 실행
     # 원래 스케줄: 한국 시간 새벽 4시 (KST 04:00 = UTC 19:00 전날) - cron: "0 19 * * *"
     - cron: "0 19 * * *"
-    # - cron: "*/10 * * * *"
   workflow_dispatch: # 수동 실행도 가능하도록
 
 jobs:
@@ -54,9 +53,12 @@ jobs:
           NAVER_CLIENT_SECRET: ${{ secrets.NAVER_CLIENT_SECRET }}
           NAVER_CLIENT_ID: ${{ secrets.NAVER_CLIENT_ID }}
           OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
+          TZ: Asia/Seoul
         run: |
-          yesterday=$(date -d "yesterday" +%Y-%m-%d)
-          uv run main.py --date $yesterday
+          YESTERDAY=$(TZ=Asia/Seoul date -d "yesterday" +%Y-%m-%d)
+          echo "Running report for date: $YESTERDAY (KST)"
+          uv run main.py --date $YESTERDAY
+
 
       - name: Upload report artifacts
         if: always()
