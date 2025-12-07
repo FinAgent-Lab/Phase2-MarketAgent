@@ -4,7 +4,8 @@ on:
   schedule:
     # 테스트용: 10분마다 실행
     # 원래 스케줄: 한국 시간 새벽 4시 (KST 04:00 = UTC 19:00 전날) - cron: "0 19 * * *"
-    - cron: "*/10 * * * *"
+    - cron: "0 19 * * *"
+    # - cron: "*/10 * * * *"
   workflow_dispatch: # 수동 실행도 가능하도록
 
 jobs:
