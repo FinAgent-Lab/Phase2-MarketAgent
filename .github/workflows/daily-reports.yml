@@ -59,6 +59,7 @@ jobs:
           echo "Running report for date: $YESTERDAY (KST)"
           uv run main.py --date $YESTERDAY
 
+
       - name: Upload report artifacts
         if: always()
         uses: actions/upload-artifact@v4
