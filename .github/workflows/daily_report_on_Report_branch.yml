@@ -63,7 +63,7 @@ jobs:
       run: |
         git config --global user.name "github-actions[bot]"
         git config --global user.email "github-actions[bot]@users.noreply.github.com"
-        git checkout -B reports   # reports 브랜치 새로 만들거나 덮어쓰기
+        git switch reports   # reports 브랜치
         git add hsy/daily_reports/
         git commit -m "Add daily report for $(date -d 'yesterday' +%Y-%m-%d)"
         git push origin reports --force
