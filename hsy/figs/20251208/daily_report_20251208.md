@@ -1,0 +1,69 @@
+# Daily Market Report (LLM-ready) — 2025-12-08
+
+## How to use this file (for an LLM)
+- Summarize today's market in 5–8 bullet points.
+- Identify the biggest winners/losers and possible drivers.
+- Comment on volatility (intraday range) and risk regime.
+- Use the **Raw table** section for grounding and quoting numbers.
+
+## Metric definitions
+- **ret_pct**: (Close - Open) / Open * 100
+- **range_pct**: (High - Low) / Open * 100
+- **close_over_open**: Close / Open
+- **candle_dir**: sign(Close - Open) → +1(up), 0(flat), -1(down)
+
+## Executive summary (auto)
+- Best performer: **VIX** (3.158%)
+- Worst performer: **DOWJONES** (-0.484%)
+- Highest intraday range: **VIX** (6.130%)
+- Risk regime inference: **Risk-off (provisional)** (score=-2.75)
+  - Evidence:
+    - Equity mean return: -0.436%
+    - VIX return: 3.158% (inverse signal)
+    - USD/KRW return: 0.000% (inverse tilt)
+    - DXY return: 0.121% (inverse tilt)
+    - Gold return: -0.435% (weak inverse tilt)
+    - US10Y change proxy (ret_pct): 0.700% (context only)
+
+## Leaderboards
+### Top 3 daily returns (ret_pct)
+| stock   |   ret_pct |
+|:--------|----------:|
+| VIX     |  3.1579   |
+| US5YT   |  0.751681 |
+| US10YT  |  0.699971 |
+
+### Bottom 3 daily returns (ret_pct)
+| stock       |   ret_pct |
+|:------------|----------:|
+| DOWJONES    | -0.484019 |
+| RUSSELL2000 | -0.45174  |
+| GOLD        | -0.43514  |
+
+### Top 3 intraday ranges (range_pct)
+| stock   |   range_pct |
+|:--------|------------:|
+| VIX     |     6.13003 |
+| BITCOIN |     2.8999  |
+| US5YT   |     1.42283 |
+
+## Notes / caveats
+- Risk regime is a heuristic signal. Treat it as a starting point for narrative, not a definitive classifier.
+- Some assets may have missing/zero Volume; volume-based interpretation may be limited.
+- FX/yield series may have different market conventions; interpret ret_pct carefully.
+
+## Raw table (ground truth)
+| stock            | date       |      Open |      High |       Low |     Close |        Volume |   ret_pct |   range_pct |   close_over_open |   candle_dir |
+|:-----------------|:-----------|----------:|----------:|----------:|----------:|--------------:|----------:|------------:|------------------:|-------------:|
+| NASDAQ           | 2025-12-08 | 23638.2   | 23698.9   | 23455.1   | 23545.9   |   8.53367e+09 | -0.390555 |    1.03171  |          0.996094 |           -1 |
+| S&P500           | 2025-12-08 |  6875.2   |  6878.27  |  6827.19  |  6846.51  |   4.75713e+09 | -0.417303 |    0.742961 |          0.995827 |           -1 |
+| DOWJONES         | 2025-12-08 | 47971.5   | 47971.5   | 47611.9   | 47739.3   |   5.0549e+08  | -0.484019 |    0.749574 |          0.99516  |           -1 |
+| RUSSELL2000      | 2025-12-08 |  2532.42  |  2540.9   |  2517.14  |  2520.98  |   4.75713e+09 | -0.45174  |    0.938233 |          0.995483 |           -1 |
+| USD/KRW          | 2025-12-08 |  1471.81  |  1472.05  |  1464.71  |  1471.81  |   0           |  0        |    0.498712 |          1        |            0 |
+| Dallor Index/USD | 2025-12-08 |    98.97  |    99.23  |    98.79  |    99.09  |   0           |  0.121244 |    0.444582 |          1.00121  |            1 |
+| GOLD             | 2025-12-08 |  4205.5   |  4215.8   |  4175.5   |  4187.2   | 318           | -0.43514  |    0.958264 |          0.995649 |           -1 |
+| BITCOIN          | 2025-12-08 | 90424.6   | 92267.1   | 89644.9   | 90640.2   |   5.73941e+10 |  0.23845  |    2.8999   |          1.00238  |            1 |
+| VIX              | 2025-12-08 |    16.15  |    17.09  |    16.1   |    16.66  |   0           |  3.1579   |    6.13003  |          1.03158  |            1 |
+| US5YT            | 2025-12-08 |     3.725 |     3.778 |     3.725 |     3.753 |   0           |  0.751681 |    1.42283  |          1.00752  |            1 |
+| US10YT           | 2025-12-08 |     4.143 |     4.192 |     4.143 |     4.172 |   0           |  0.699971 |    1.18271  |          1.007    |            1 |
+| US30YT           | 2025-12-08 |     4.792 |     4.835 |     4.789 |     4.816 |   0           |  0.500838 |    0.959933 |          1.00501  |            1 |
