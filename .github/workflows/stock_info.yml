@@ -1,0 +1,69 @@
+name: Daily Stock information
+
+on:
+  schedule:
+    - cron: "40 21 * * *"
+  workflow_dispatch: # 수동 실행도 가능하도록
+
+permissions:
+  contents: write
+
+jobs:
+  run-daily-report:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v4
+      with:
+        ref: main
+        fetch-depth: 0
+
+    - name: Install uv
+      uses: astral-sh/setup-uv@v4
+      with:
+        version: "latest"
+
+    - name: Set up Python 3.12
+      uses: actions/setup-python@v5
+      with:
+        python-version: "3.12"
+
+    - name: Install dependencies
+      working-directory: ./hsy
+      run: uv sync
+
+    - name: Verify environment variables
+      run: |
+        if [ -z "${{ secrets.NAVER_CLIENT_SECRET }}" ]; then
+          echo "Error: NAVER_CLIENT_SECRET is not set"
+          exit 1
+        fi
+        if [ -z "${{ secrets.NAVER_CLIENT_ID }}" ]; then
+          echo "Error: NAVER_CLIENT_ID is not set"
+          exit 1
+        fi
+        if [ -z "${{ secrets.OPENROUTER_API_KEY }}" ]; then
+          echo "Error: OPENROUTER_API_KEY is not set"
+          exit 1
+        fi
+        echo "All environment variables are set"
+    - name: Run daily report
+      working-directory: ./hsy
+      env:
+        NAVER_CLIENT_SECRET: ${{ secrets.NAVER_CLIENT_SECRET }}
+        NAVER_CLIENT_ID: ${{ secrets.NAVER_CLIENT_ID }}
+        OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
+        TZ: Asia/Seoul
+      run: |
+        YESTERDAY=$(TZ=Asia/Seoul date -d "yesterday" +%Y-%m-%d)
+        echo "Running report for date: $YESTERDAY (KST)"
+        uv run stock_info.py --date $YESTERDAY
+    - name: Commit and push report to reports branch
+      run: |
+        git config --global user.name "github-actions[bot]"
+        git config --global user.email "github-actions[bot]@users.noreply.github.com"
+        git fetch origin reports:reports
+        git switch reports   # reports 브랜치
+        git add hsy/figs/
+        git commit -m "Add daily report for $(date -d 'yesterday' +%Y-%m-%d)"
+        git push origin reports --force
