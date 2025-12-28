@@ -2,7 +2,7 @@ name: Daily Report on Report Branch
 
 on:
   schedule:
-    - cron: "0 20 * * *"
+    - cron: "0 16 * * *"
   workflow_dispatch: # 수동 실행도 가능하도록
 
 permissions:
