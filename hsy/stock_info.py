@@ -451,7 +451,6 @@ def plot_intraday_range_bar(dfm: pd.DataFrame, title: Optional[str] = None) -> p
     fig.tight_layout()
     return fig
 
-
 def plot_candlestick_subplots(
     dfm: pd.DataFrame,
     stocks: List[str],
@@ -501,8 +500,6 @@ def plot_candlestick_subplots(
     os.makedirs(out_dir, exist_ok=True)
     fig.savefig(os.path.join(out_dir, filename), dpi=150)
     plt.close(fig)
-
-
 
 def plot_volume_vs_return_scatter(dfm: pd.DataFrame, title: Optional[str] = None) -> plt.Figure:
     """
@@ -662,10 +659,6 @@ def main() -> None:
 
     # 5) Candlesticks (one asset per file)
     plot_candlestick_subplots(df, focus_list, out_dir)
-    # for stock in focus_list:
-    #     fig = 
-    #     fig.savefig(os.path.join(out_dir, f"{stock}_OneDayCandles.png"), dpi=150)
-    #     plt.close(fig)
 
     # 6) Daily return bar
     exclude = {"VIX", "Dallor Index/USD", "USD/KRW"}
