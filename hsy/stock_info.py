@@ -452,51 +452,56 @@ def plot_intraday_range_bar(dfm: pd.DataFrame, title: Optional[str] = None) -> p
     return fig
 
 
-def plot_candlestick_one_day(
+def plot_candlestick_subplots(
     dfm: pd.DataFrame,
     stocks: List[str],
-    title: Optional[str] = None,
-) -> plt.Figure:
+    out_dir: str,
+    filename: str = "AllStocks_Subplots.png",
+):
     """
-    Draw a minimal candlestick representation for one day.
+    Draw one-day candlesticks for multiple stocks,
+    each in its own subplot, and save as a single PNG.
 
-    Rendering logic
-    ---------------
-    - Wick: vertical line from Low to High
-    - Body: rectangle from min(Open, Close) to max(Open, Close)
-
-    Color convention (as per your original code)
-    --------------------------------------------
-    - Open < Close  => blue (up day)
-    - Open > Close  => red  (down day)
-
-    Notes
-    -----
-    - This uses only matplotlib primitives for portability (no mplfinance).
-    - For a single-day report, one candle per asset is enough to show:
-      (1) direction, (2) intraday extremes, (3) wick asymmetry.
+    Parameters
+    ----------
+    dfm : pd.DataFrame
+        Must contain columns: ['date','stock','Open','Close','High','Low']
+    stocks : List[str]
+        List of stock tickers to plot
+    out_dir : str
+        Output directory
+    filename : str
+        Output filename (default: AllStocks_Subplots.png)
     """
-    d = dfm[dfm["stock"].isin(stocks)].copy()
-    d["stock"] = pd.Categorical(d["stock"], categories=stocks, ordered=True)
-    d = d.sort_values("stock")
+    n = len(stocks)
+    fig, axes = plt.subplots(1, n, figsize=(3*n, 5), sharey=False)
 
-    fig, ax = plt.subplots(figsize=(3, 5))
-    x = np.arange(len(d))
+    # axes가 하나일 경우 리스트로 변환
+    if n == 1:
+        axes = [axes]
 
-    body_bottom = np.minimum(d["Open"], d["Close"])
-    body_top = np.maximum(d["Open"], d["Close"])
-    colors = np.where(d["Open"] < d["Close"], "blue", "red")
+    for ax, stock in zip(axes, stocks):
+        d = dfm[dfm["stock"] == stock].iloc[0]  # 하루치 데이터만 있다고 가정
+        body_bottom = min(d["Open"], d["Close"])
+        body_top = max(d["Open"], d["Close"])
+        color = "blue" if d["Open"] > d["Close"] else "red"
 
-    ax.vlines(x, d["Low"], d["High"], linewidth=1, color=colors)
-    ax.bar(x, (body_top - body_bottom), bottom=body_bottom, width=0.6, color=colors)
+        # Wick
+        ax.vlines(0, d["Low"], d["High"], linewidth=1, color=color)
+        # Body
+        ax.bar(0, body_top - body_bottom, bottom=body_bottom, width=0.6, color=color)
 
-    ax.set_xticks(x)
-    ax.set_xticklabels(d["stock"], rotation=0)
-    ax.set_ylabel("Price / Index Level")
-    ax.set_title(title or f"1-day Candle ({d['date'].iloc[0]})")
-    ax.grid(axis="y", alpha=0.2)
+        ax.set_xticks([0])
+        ax.set_xticklabels([stock])
+        ax.set_ylabel("Price")
+        ax.set_title(f"{stock} ({d['date']})")
+        ax.grid(axis="y", alpha=0.2)
+
     fig.tight_layout()
-    return fig
+    os.makedirs(out_dir, exist_ok=True)
+    fig.savefig(os.path.join(out_dir, filename), dpi=150)
+    plt.close(fig)
+
 
 
 def plot_volume_vs_return_scatter(dfm: pd.DataFrame, title: Optional[str] = None) -> plt.Figure:
@@ -629,7 +634,7 @@ def main() -> None:
         "Dallor Index/USD": "DX-Y.NYB",
         "GOLD": "GC=F",
         "BITCOIN": "BTC/USD",
-        "VIX": "VIX",
+        # "VIX": "VIX",
         "US5YT": "US5YT",
         "US10YT": "US10YT",
         "US30YT": "US30YT",
@@ -656,10 +661,11 @@ def main() -> None:
     print(f"[OK] Saved LLM-ready markdown report: {md_path}")
 
     # 5) Candlesticks (one asset per file)
-    for stock in focus_list:
-        fig = plot_candlestick_one_day(df, [stock])
-        fig.savefig(os.path.join(out_dir, f"{stock}_OneDayCandles.png"), dpi=150)
-        plt.close(fig)
+    plot_candlestick_subplots(df, focus_list, out_dir)
+    # for stock in focus_list:
+    #     fig = 
+    #     fig.savefig(os.path.join(out_dir, f"{stock}_OneDayCandles.png"), dpi=150)
+    #     plt.close(fig)
 
     # 6) Daily return bar
     exclude = {"VIX", "Dallor Index/USD", "USD/KRW"}
