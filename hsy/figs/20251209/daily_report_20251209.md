@@ -1,0 +1,67 @@
+# Daily Market Report (LLM-ready) — 2025-12-09
+
+## How to use this file (for an LLM)
+- Summarize today's market in 5–8 bullet points.
+- Identify the biggest winners/losers and possible drivers.
+- Comment on volatility (intraday range) and risk regime.
+- Use the **Raw table** section for grounding and quoting numbers.
+
+## Metric definitions
+- **ret_pct**: (Close - Open) / Open * 100
+- **range_pct**: (High - Low) / Open * 100
+- **close_over_open**: Close / Open
+- **candle_dir**: sign(Close - Open) → +1(up), 0(flat), -1(down)
+
+## Executive summary (auto)
+- Best performer: **BITCOIN** (2.264%)
+- Worst performer: **DOWJONES** (-0.344%)
+- Highest intraday range: **BITCOIN** (5.532%)
+- Risk regime inference: **Risk-on (provisional)** (score=0.75)
+  - Evidence:
+    - Equity mean return: 0.094%
+    - USD/KRW return: 0.000% (inverse tilt)
+    - DXY return: 0.172% (inverse tilt)
+    - Gold return: 0.382% (weak inverse tilt)
+    - US10Y change proxy (ret_pct): 0.577% (context only)
+
+## Leaderboards
+### Top 3 daily returns (ret_pct)
+| stock   |   ret_pct |
+|:--------|----------:|
+| BITCOIN |  2.26392  |
+| US5YT   |  0.799999 |
+| US10YT  |  0.576638 |
+
+### Bottom 3 daily returns (ret_pct)
+| stock    |   ret_pct |
+|:---------|----------:|
+| DOWJONES | -0.344122 |
+| S&P500   | -0.001463 |
+| USD/KRW  |  0        |
+
+### Top 3 intraday ranges (range_pct)
+| stock   |   range_pct |
+|:--------|------------:|
+| BITCOIN |     5.53245 |
+| US5YT   |     1.44    |
+| US10YT  |     1.12926 |
+
+## Notes / caveats
+- Risk regime is a heuristic signal. Treat it as a starting point for narrative, not a definitive classifier.
+- Some assets may have missing/zero Volume; volume-based interpretation may be limited.
+- FX/yield series may have different market conventions; interpret ret_pct carefully.
+
+## Raw table (ground truth)
+| stock            | date       |      Open |      High |       Low |     Close |        Volume |   ret_pct |   range_pct |   close_over_open |   candle_dir |
+|:-----------------|:-----------|----------:|----------:|----------:|----------:|--------------:|----------:|------------:|------------------:|-------------:|
+| NASDAQ           | 2025-12-09 | 23504.6   | 23616.5   | 23449.7   | 23576.5   |   7.1926e+09  |  0.305816 |    0.709352 |          1.00306  |            1 |
+| S&P500           | 2025-12-09 |  6840.61  |  6864.92  |  6837.43  |  6840.51  |   4.50805e+09 | -0.001463 |    0.401861 |          0.999985 |           -1 |
+| DOWJONES         | 2025-12-09 | 47724.5   | 47957.8   | 47533.6   | 47560.3   |   4.2547e+08  | -0.344122 |    0.888825 |          0.996559 |           -1 |
+| RUSSELL2000      | 2025-12-09 |  2515.79  |  2541.77  |  2514.09  |  2526.24  |   4.50805e+09 |  0.415375 |    1.10025  |          1.00415  |            1 |
+| USD/KRW          | 2025-12-09 |  1468.51  |  1472.08  |  1465.49  |  1468.51  |   0           |  0        |    0.448752 |          1        |            0 |
+| Dallor Index/USD | 2025-12-09 |    99.05  |    99.31  |    98.95  |    99.22  |   0           |  0.171629 |    0.363453 |          1.00172  |            1 |
+| GOLD             | 2025-12-09 |  4190.7   |  4219.7   |  4177.7   |  4206.7   | 660           |  0.381798 |    1.00222  |          1.00382  |            1 |
+| BITCOIN          | 2025-12-09 | 90639.7   | 94601.6   | 89587     | 92691.7   |   6.68617e+10 |  2.26392  |    5.53245  |          1.02264  |            1 |
+| US5YT            | 2025-12-09 |     3.75  |     3.783 |     3.729 |     3.78  |   0           |  0.799999 |    1.44     |          1.008    |            1 |
+| US10YT           | 2025-12-09 |     4.162 |     4.19  |     4.143 |     4.186 |   0           |  0.576638 |    1.12926  |          1.00577  |            1 |
+| US30YT           | 2025-12-09 |     4.798 |     4.814 |     4.775 |     4.809 |   0           |  0.229265 |    0.812839 |          1.00229  |            1 |

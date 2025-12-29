@@ -13,13 +13,12 @@
 - **candle_dir**: sign(Close - Open) → +1(up), 0(flat), -1(down)
 
 ## Executive summary (auto)
-- Best performer: **VIX** (3.158%)
+- Best performer: **US5YT** (0.752%)
 - Worst performer: **DOWJONES** (-0.484%)
-- Highest intraday range: **VIX** (6.130%)
-- Risk regime inference: **Risk-off (provisional)** (score=-2.75)
+- Highest intraday range: **BITCOIN** (2.900%)
+- Risk regime inference: **Risk-off (provisional)** (score=-1.75)
   - Evidence:
     - Equity mean return: -0.436%
-    - VIX return: 3.158% (inverse signal)
     - USD/KRW return: 0.000% (inverse tilt)
     - DXY return: 0.121% (inverse tilt)
     - Gold return: -0.435% (weak inverse tilt)
@@ -29,9 +28,9 @@
 ### Top 3 daily returns (ret_pct)
 | stock   |   ret_pct |
 |:--------|----------:|
-| VIX     |  3.1579   |
 | US5YT   |  0.751681 |
 | US10YT  |  0.699971 |
+| US30YT  |  0.500838 |
 
 ### Bottom 3 daily returns (ret_pct)
 | stock       |   ret_pct |
@@ -43,9 +42,9 @@
 ### Top 3 intraday ranges (range_pct)
 | stock   |   range_pct |
 |:--------|------------:|
-| VIX     |     6.13003 |
 | BITCOIN |     2.8999  |
 | US5YT   |     1.42283 |
+| US10YT  |     1.18271 |
 
 ## Notes / caveats
 - Risk regime is a heuristic signal. Treat it as a starting point for narrative, not a definitive classifier.
@@ -63,7 +62,6 @@
 | Dallor Index/USD | 2025-12-08 |    98.97  |    99.23  |    98.79  |    99.09  |   0           |  0.121244 |    0.444582 |          1.00121  |            1 |
 | GOLD             | 2025-12-08 |  4205.5   |  4215.8   |  4175.5   |  4187.2   | 318           | -0.43514  |    0.958264 |          0.995649 |           -1 |
 | BITCOIN          | 2025-12-08 | 90424.6   | 92267.1   | 89644.9   | 90640.2   |   5.73941e+10 |  0.23845  |    2.8999   |          1.00238  |            1 |
-| VIX              | 2025-12-08 |    16.15  |    17.09  |    16.1   |    16.66  |   0           |  3.1579   |    6.13003  |          1.03158  |            1 |
 | US5YT            | 2025-12-08 |     3.725 |     3.778 |     3.725 |     3.753 |   0           |  0.751681 |    1.42283  |          1.00752  |            1 |
 | US10YT           | 2025-12-08 |     4.143 |     4.192 |     4.143 |     4.172 |   0           |  0.699971 |    1.18271  |          1.007    |            1 |
 | US30YT           | 2025-12-08 |     4.792 |     4.835 |     4.789 |     4.816 |   0           |  0.500838 |    0.959933 |          1.00501  |            1 |
