@@ -1,6 +1,7 @@
 import argparse
 from datetime import datetime
 from naver_news_daily_report import write_report
+from summary_news import summarize_daily_report
 
 def main():
     parser = argparse.ArgumentParser(description="Naver News Daily Report")
@@ -20,6 +21,7 @@ def main():
         categorize_revision=args.categorize_revision,
         build_revision=args.build_revision,
     )
+    summarize_daily_report(target_date)
 
 if __name__ == "__main__":
     main()
