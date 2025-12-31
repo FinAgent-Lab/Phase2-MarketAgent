@@ -385,7 +385,7 @@ if __name__ == "__main__":
     write_report(
         date="2025-11-30", # 날짜는 변경
         query="미국 주식", # 쿼리는 고정
-        model_name="tngtech/deepseek-r1t2-chimera:free",
+        model_name="xiaomi/mimo-v2-flash:free",
         openrouter_url="https://openrouter.ai/api/v1",
         show_stats=True, # 통계는 필요하면 True
         categorize_revision="REV00",
