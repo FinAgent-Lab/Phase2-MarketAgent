@@ -48,6 +48,13 @@ jobs:
         fi
         echo "All environment variables are set"
 
+    - name: Switch reports branch
+      run: |
+        git config --global user.name "github-actions[bot]"
+        git config --global user.email "github-actions[bot]@users.noreply.github.com"
+        git fetch origin reports:reports
+        git switch reports   # reports 브랜치
+    
     - name: Run daily report
       working-directory: ./hsy
       env:
@@ -62,10 +69,6 @@ jobs:
 
     - name: Commit and push report to reports branch
       run: |
-        git config --global user.name "github-actions[bot]"
-        git config --global user.email "github-actions[bot]@users.noreply.github.com"
-        git fetch origin reports:reports
-        git switch reports   # reports 브랜치
         git add hsy/daily_reports/
         git commit -m "Add daily report for $(date -d 'yesterday' +%Y-%m-%d)"
         git push origin reports --force
