@@ -70,5 +70,6 @@ jobs:
     - name: Commit and push report to reports branch
       run: |
         git add hsy/daily_reports/
+        git add hsy/summary_news/
         git commit -m "Add daily report for $(date -d 'yesterday' +%Y-%m-%d)"
         git push origin reports --force
