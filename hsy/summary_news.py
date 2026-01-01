@@ -10,7 +10,7 @@ load_dotenv()
 OPENROUTER_API_KEY = os.getenv("OPENROUTER_API_KEY")
 
 llm = ChatOpenAI(
-    model="xiaomi/mimo-v2-flash:free",
+    model="tngtech/deepseek-r1t2-chimera:free",
     api_key=OPENROUTER_API_KEY,
     base_url="https://openrouter.ai/api/v1",
 )
