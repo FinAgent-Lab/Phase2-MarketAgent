@@ -394,7 +394,17 @@ def save_llm_markdown_report(
     out_path = os.path.join(out_dir, f"daily_report_{target_date.replace('-', '')}.md")
     with open(out_path, "w", encoding="utf-8") as f:
         f.write("\n".join(lines))
-
+    
+    # Build markdown for d of raw data table
+    lines: List[str] = []
+    lines.append("# Market Overview")
+    lines.append(d.to_markdown(index=False))
+    lines.append("")
+    
+    out_path = os.path.join(out_dir, f"market_overview_{target_date.replace('-', '')}_for_users.md")
+    with open(out_path, "w", encoding="utf-8") as f:
+        f.write("\n".join(lines))
+    
     return out_path
 
 
