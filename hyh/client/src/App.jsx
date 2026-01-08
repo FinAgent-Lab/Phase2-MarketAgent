@@ -1,6 +1,7 @@
 import { useState, useCallback } from 'react';
 import { Sidebar } from './components/Sidebar';
 import { ChatArea } from './components/ChatArea';
+import { DailyReport } from './components/DailyReport';
 import { useChat } from './hooks/useChat';
 import './App.css';
 
@@ -8,6 +9,7 @@ function App() {
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
   const [conversations, setConversations] = useState([]);
   const [currentConversationId, setCurrentConversationId] = useState(null);
+  const [activeTab, setActiveTab] = useState('chat');
 
   const { 
     messages, 
@@ -49,6 +51,10 @@ function App() {
     }
   }, [sendMessage, messages.length]);
 
+  const handleTabChange = useCallback((tab) => {
+    setActiveTab(tab);
+  }, []);
+
   return (
     <div className="app">
       <Sidebar
@@ -59,15 +65,21 @@ function App() {
         onRefresh={handleRefresh}
         isCollapsed={isSidebarCollapsed}
         onToggleCollapse={() => setIsSidebarCollapsed(prev => !prev)}
+        activeTab={activeTab}
+        onTabChange={handleTabChange}
       />
-      <ChatArea
-        messages={messages}
-        isLoading={isLoading}
-        error={error}
-        onSendMessage={handleSendMessage}
-        onCancelRequest={cancelRequest}
-        onRetry={retryLastMessage}
-      />
+      {activeTab === 'chat' ? (
+        <ChatArea
+          messages={messages}
+          isLoading={isLoading}
+          error={error}
+          onSendMessage={handleSendMessage}
+          onCancelRequest={cancelRequest}
+          onRetry={retryLastMessage}
+        />
+      ) : (
+        <DailyReport />
+      )}
     </div>
   );
 }

@@ -55,9 +55,9 @@ export function ChatInput({ onSend, disabled }) {
         </button>
       </div>
       <p className="chat-input__hint">
-        Built with <span className="chat-input__logo">✦</span>
       </p>
     </form>
   );
 }
+
 
