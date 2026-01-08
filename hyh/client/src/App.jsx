@@ -2,6 +2,7 @@ import { useState, useCallback } from 'react';
 import { Sidebar } from './components/Sidebar';
 import { ChatArea } from './components/ChatArea';
 import { DailyReport } from './components/DailyReport';
+import { PersonalRecommend } from './components/PersonalRecommend';
 import { useChat } from './hooks/useChat';
 import './App.css';
 
@@ -68,7 +69,7 @@ function App() {
         activeTab={activeTab}
         onTabChange={handleTabChange}
       />
-      {activeTab === 'chat' ? (
+      {activeTab === 'chat' && (
         <ChatArea
           messages={messages}
           isLoading={isLoading}
@@ -77,9 +78,9 @@ function App() {
           onCancelRequest={cancelRequest}
           onRetry={retryLastMessage}
         />
-      ) : (
-        <DailyReport />
       )}
+      {activeTab === 'recommend' && <PersonalRecommend />}
+      {activeTab === 'report' && <DailyReport />}
     </div>
   );
 }

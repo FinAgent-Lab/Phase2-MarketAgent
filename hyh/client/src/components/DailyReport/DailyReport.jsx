@@ -20,9 +20,14 @@ function getFirstDayOfMonth(year, month) {
   return new Date(year, month, 1).getDay();
 }
 
+function getYesterday() {
+  const today = new Date();
+  return new Date(today.getFullYear(), today.getMonth(), today.getDate() - 1);
+}
+
 export function DailyReport() {
-  const [selectedDate, setSelectedDate] = useState(new Date());
-  const [currentMonth, setCurrentMonth] = useState(new Date());
+  const [selectedDate, setSelectedDate] = useState(getYesterday);
+  const [currentMonth, setCurrentMonth] = useState(getYesterday);
   const [markdown, setMarkdown] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
@@ -71,10 +76,10 @@ export function DailyReport() {
     setCurrentMonth(prev => new Date(prev.getFullYear(), prev.getMonth() + 1, 1));
   };
 
-  const handleToday = () => {
-    const today = new Date();
-    setCurrentMonth(today);
-    setSelectedDate(today);
+  const handleYesterday = () => {
+    const yesterday = getYesterday();
+    setCurrentMonth(yesterday);
+    setSelectedDate(yesterday);
   };
 
   const renderCalendar = () => {
@@ -101,22 +106,23 @@ export function DailyReport() {
     }
     
     // Days of month
-    const today = new Date();
+    const yesterday = getYesterday();
     const selectedDateStr = formatDate(selectedDate);
     
     for (let day = 1; day <= daysInMonth; day++) {
       const currentDate = new Date(year, month, day);
       const dateStr = formatDate(currentDate);
-      const isToday = formatDate(today) === dateStr;
+      const isYesterday = formatDate(yesterday) === dateStr;
       const isSelected = selectedDateStr === dateStr;
-      const isFuture = currentDate > today;
+      // 오늘과 미래 날짜는 비활성화 (리포트는 전날까지만 존재)
+      const isUnavailable = currentDate > yesterday;
       
       days.push(
         <button
           key={day}
-          className={`calendar__day ${isToday ? 'calendar__day--today' : ''} ${isSelected ? 'calendar__day--selected' : ''} ${isFuture ? 'calendar__day--future' : ''}`}
-          onClick={() => !isFuture && handleDateClick(day)}
-          disabled={isFuture}
+          className={`calendar__day ${isYesterday ? 'calendar__day--latest' : ''} ${isSelected ? 'calendar__day--selected' : ''} ${isUnavailable ? 'calendar__day--future' : ''}`}
+          onClick={() => !isUnavailable && handleDateClick(day)}
+          disabled={isUnavailable}
         >
           {day}
         </button>
@@ -174,6 +180,14 @@ export function DailyReport() {
           
           {isCalendarOpen && (
             <div className="calendar">
+              <div className="calendar__notice">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <circle cx="12" cy="12" r="10"/>
+                  <line x1="12" y1="16" x2="12" y2="12"/>
+                  <line x1="12" y1="8" x2="12.01" y2="8"/>
+                </svg>
+                <span>매일 아침, 전날까지의 리포트가 발행됩니다</span>
+              </div>
               <div className="calendar__header">
                 <button className="calendar__nav-btn" onClick={handlePrevMonth}>
                   <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -189,8 +203,8 @@ export function DailyReport() {
                     <polyline points="9,18 15,12 9,6"/>
                   </svg>
                 </button>
-                <button className="calendar__today-btn" onClick={handleToday}>
-                  오늘
+                <button className="calendar__today-btn" onClick={handleYesterday}>
+                  최신
                 </button>
               </div>
               <div className="calendar__grid">

@@ -1,0 +1,115 @@
+.personal-recommend {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  background-color: var(--bg-primary);
+  overflow: hidden;
+}
+
+/* Header */
+.personal-recommend__header {
+  display: flex;
+  align-items: center;
+  padding: 16px 24px;
+  border-bottom: 1px solid var(--border-primary);
+  background: linear-gradient(135deg, var(--bg-secondary) 0%, var(--bg-tertiary) 100%);
+  gap: 12px;
+}
+
+.personal-recommend__title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin: 0;
+}
+
+.personal-recommend__title svg {
+  color: #f472b6;
+}
+
+.personal-recommend__divider {
+  color: var(--text-dim);
+  font-weight: 300;
+}
+
+.personal-recommend__subtitle {
+  font-size: 13px;
+  color: var(--text-muted);
+}
+
+/* Content */
+.personal-recommend__content {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  overflow-y: auto;
+}
+
+/* Placeholder */
+.personal-recommend__placeholder {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  max-width: 400px;
+}
+
+.personal-recommend__icon-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 120px;
+  height: 120px;
+  background: linear-gradient(135deg, rgba(244, 114, 182, 0.1) 0%, rgba(168, 85, 247, 0.1) 100%);
+  border-radius: 50%;
+  margin-bottom: 24px;
+}
+
+.personal-recommend__icon-wrapper svg {
+  color: #f472b6;
+}
+
+.personal-recommend__placeholder-title {
+  font-size: 24px;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin: 0 0 12px;
+}
+
+.personal-recommend__placeholder-text {
+  font-size: 14px;
+  color: var(--text-muted);
+  line-height: 1.8;
+  margin: 0 0 32px;
+}
+
+/* Features */
+.personal-recommend__features {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  width: 100%;
+}
+
+.personal-recommend__feature {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 20px;
+  background: var(--bg-tertiary);
+  border: 1px solid var(--border-primary);
+  border-radius: var(--radius-md);
+  color: var(--text-secondary);
+  font-size: 14px;
+}
+
+.personal-recommend__feature svg {
+  color: var(--accent-primary);
+  flex-shrink: 0;
+}
