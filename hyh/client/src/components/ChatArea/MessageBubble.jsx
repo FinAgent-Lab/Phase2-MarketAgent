@@ -2,13 +2,14 @@ import './MessageBubble.css';
 
 export function MessageBubble({ message }) {
   const isUser = message.role === 'user';
+  const isStreaming = message.isStreaming;
   const timestamp = new Date(message.timestamp).toLocaleTimeString('ko-KR', {
     hour: '2-digit',
     minute: '2-digit',
   });
 
   return (
-    <div className={`message ${isUser ? 'message--user' : 'message--assistant'}`}>
+    <div className={`message ${isUser ? 'message--user' : 'message--assistant'} ${isStreaming ? 'message--streaming' : ''}`}>
       {!isUser && (
         <div className="message__avatar">
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -20,9 +21,12 @@ export function MessageBubble({ message }) {
       )}
       <div className="message__content-wrapper">
         <div className="message__bubble">
-          <p className="message__content">{message.content}</p>
+          <p className="message__content">
+            {message.content}
+            {isStreaming && <span className="message__cursor">▌</span>}
+          </p>
         </div>
-        <span className="message__timestamp">{timestamp}</span>
+        {!isStreaming && <span className="message__timestamp">{timestamp}</span>}
       </div>
     </div>
   );

@@ -17,7 +17,7 @@ export function useChat() {
   const generateId = () => `msg_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
 
   /**
-   * Send a message and get AI response
+   * Send a message and get AI response (with streaming UI updates)
    */
   const sendMessage = useCallback(async (content) => {
     if (!content.trim() || isLoading) return;
@@ -30,8 +30,18 @@ export function useChat() {
       timestamp: new Date().toISOString(),
     };
 
-    // Add user message to state
-    setMessages(prev => [...prev, userMessage]);
+    // Create assistant message placeholder for streaming
+    const assistantMessageId = generateId();
+    const assistantMessage = {
+      id: assistantMessageId,
+      role: 'assistant',
+      content: '',
+      timestamp: new Date().toISOString(),
+      isStreaming: true,
+    };
+
+    // Add user message and empty assistant message to state
+    setMessages(prev => [...prev, userMessage, assistantMessage]);
     setIsLoading(true);
     setError(null);
 
@@ -53,10 +63,23 @@ export function useChat() {
         });
       }
 
-      // Send to API
+      // Callback for real-time streaming updates
+      const handleChunk = (currentAnswer, newConversationId) => {
+        setMessages(prev => prev.map(msg => 
+          msg.id === assistantMessageId 
+            ? { ...msg, content: currentAnswer }
+            : msg
+        ));
+        if (newConversationId) {
+          setConversationId(newConversationId);
+        }
+      };
+
+      // Send to API with streaming callback
       const response = await sendChatMessage(apiMessages, {
         conversationId,
         signal: abortControllerRef.current.signal,
+        onChunk: handleChunk,
       });
 
       // Update conversation ID if returned (Dify)
@@ -64,18 +87,17 @@ export function useChat() {
         setConversationId(response.conversationId);
       }
 
-      // Create assistant message
-      const assistantMessage = {
-        id: generateId(),
-        role: 'assistant',
-        content: response.answer,
-        timestamp: new Date().toISOString(),
-      };
-
-      setMessages(prev => [...prev, assistantMessage]);
+      // Finalize assistant message (remove streaming flag)
+      setMessages(prev => prev.map(msg => 
+        msg.id === assistantMessageId 
+          ? { ...msg, content: response.answer, isStreaming: false }
+          : msg
+      ));
     } catch (err) {
       setError(err.message);
       console.error('Chat error:', err);
+      // Remove the empty assistant message on error
+      setMessages(prev => prev.filter(msg => msg.id !== assistantMessageId));
     } finally {
       setIsLoading(false);
       abortControllerRef.current = null;

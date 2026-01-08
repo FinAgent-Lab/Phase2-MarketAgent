@@ -18,7 +18,8 @@ const config = {
     model: import.meta.env.VITE_OPENAI_MODEL || 'gpt-4o-mini',
   },
   dify: {
-    baseUrl: import.meta.env.VITE_DIFY_BASE_URL || 'https://api.dify.ai/v1',
+    // Use proxy in development to avoid CORS issues
+    baseUrl: import.meta.env.DEV ? '/api/dify' : (import.meta.env.VITE_DIFY_BASE_URL || 'https://api.dify.ai/v1'),
     apiKey: import.meta.env.VITE_DIFY_API_KEY || '',
   },
 };
@@ -67,13 +68,14 @@ async function sendToOpenAI(messages, signal) {
 }
 
 /**
- * Sends a chat message to Dify API
+ * Sends a chat message to Dify API (Streaming mode)
  * @param {Array} messages - Array of message objects with role and content
  * @param {string} conversationId - Optional conversation ID for multi-turn
  * @param {AbortSignal} signal - Optional abort signal for cancellation
+ * @param {Function} onChunk - Callback for each streamed chunk (for real-time UI updates)
  * @returns {Promise<{answer: string, conversationId: string}>} - Response with answer and conversation ID
  */
-async function sendToDify(messages, conversationId, signal) {
+async function sendToDify(messages, conversationId, signal, onChunk) {
   // Dify uses the last user message as query
   const lastUserMessage = [...messages].reverse().find(m => m.role === 'user');
   
@@ -86,7 +88,7 @@ async function sendToDify(messages, conversationId, signal) {
     body: JSON.stringify({
       inputs: {},
       query: lastUserMessage?.content || '',
-      response_mode: 'blocking',
+      response_mode: 'streaming',
       conversation_id: conversationId || '',
       user: 'user',
     }),
@@ -98,10 +100,56 @@ async function sendToDify(messages, conversationId, signal) {
     throw new Error(error.message || `API Error: ${response.status}`);
   }
 
-  const data = await response.json();
+  // Parse SSE stream
+  const reader = response.body.getReader();
+  const decoder = new TextDecoder();
+  let answer = '';
+  let resultConversationId = conversationId || '';
+
+  while (true) {
+    const { done, value } = await reader.read();
+    if (done) break;
+
+    const chunk = decoder.decode(value, { stream: true });
+    const lines = chunk.split('\n');
+
+    for (const line of lines) {
+      if (line.startsWith('data: ')) {
+        const jsonStr = line.slice(6);
+        if (jsonStr.trim() === '') continue;
+        
+        try {
+          const data = JSON.parse(jsonStr);
+          
+          // Handle different event types
+          if (data.event === 'message' || data.event === 'agent_message') {
+            answer += data.answer || '';
+            if (data.conversation_id) {
+              resultConversationId = data.conversation_id;
+            }
+            // Call onChunk callback for real-time UI updates
+            if (onChunk) {
+              onChunk(answer, resultConversationId);
+            }
+          } else if (data.event === 'message_end') {
+            if (data.conversation_id) {
+              resultConversationId = data.conversation_id;
+            }
+          } else if (data.event === 'error') {
+            throw new Error(data.message || 'Dify API Error');
+          }
+        } catch (e) {
+          // Skip invalid JSON lines
+          if (e.message !== 'Dify API Error') continue;
+          throw e;
+        }
+      }
+    }
+  }
+
   return {
-    answer: data.answer,
-    conversationId: data.conversation_id,
+    answer: answer.trim(),
+    conversationId: resultConversationId,
   };
 }
 
@@ -113,14 +161,15 @@ async function sendToDify(messages, conversationId, signal) {
  * @param {Object} options - Optional parameters
  * @param {string} options.conversationId - Conversation ID (used by Dify)
  * @param {AbortSignal} options.signal - Abort signal for cancellation
+ * @param {Function} options.onChunk - Callback for streaming chunks (real-time UI updates)
  * @returns {Promise<{answer: string, conversationId?: string}>}
  */
 export async function sendChatMessage(messages, options = {}) {
-  const { conversationId, signal } = options;
+  const { conversationId, signal, onChunk } = options;
 
   try {
     if (API_PROVIDER === 'dify') {
-      return await sendToDify(messages, conversationId, signal);
+      return await sendToDify(messages, conversationId, signal, onChunk);
     } else {
       const answer = await sendToOpenAI(messages, signal);
       return { answer };
