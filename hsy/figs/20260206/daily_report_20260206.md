@@ -1,0 +1,67 @@
+# Daily Market Report (LLM-ready) — 2026-02-06
+
+## How to use this file (for an LLM)
+- Summarize today's market in 5–8 bullet points.
+- Identify the biggest winners/losers and possible drivers.
+- Comment on volatility (intraday range) and risk regime.
+- Use the **Raw table** section for grounding and quoting numbers.
+
+## Metric definitions
+- **ret_pct**: (Close - Open) / Open * 100
+- **range_pct**: (High - Low) / Open * 100
+- **close_over_open**: Close / Open
+- **candle_dir**: sign(Close - Open) → +1(up), 0(flat), -1(down)
+
+## Executive summary (auto)
+- Best performer: **BITCOIN** (11.980%)
+- Worst performer: **USD/KRW** (-0.563%)
+- Highest intraday range: **BITCOIN** (17.650%)
+- Risk regime inference: **Risk-on (provisional)** (score=2.25)
+  - Evidence:
+    - Equity mean return: 2.035%
+    - USD/KRW return: -0.563% (inverse tilt)
+    - DXY return: -0.315% (inverse tilt)
+    - Gold return: 3.796% (weak inverse tilt)
+    - US10Y change proxy (ret_pct): 0.048% (context only)
+
+## Leaderboards
+### Top 3 daily returns (ret_pct)
+| stock       |   ret_pct |
+|:------------|----------:|
+| BITCOIN     |  11.9801  |
+| GOLD        |   3.79584 |
+| RUSSELL2000 |   2.44103 |
+
+### Bottom 3 daily returns (ret_pct)
+| stock            |   ret_pct |
+|:-----------------|----------:|
+| USD/KRW          | -0.562624 |
+| Dallor Index/USD | -0.315391 |
+| US30YT           | -0.061759 |
+
+### Top 3 intraday ranges (range_pct)
+| stock       |   range_pct |
+|:------------|------------:|
+| BITCOIN     |    17.6497  |
+| GOLD        |     6.78334 |
+| RUSSELL2000 |     2.49088 |
+
+## Notes / caveats
+- Risk regime is a heuristic signal. Treat it as a starting point for narrative, not a definitive classifier.
+- Some assets may have missing/zero Volume; volume-based interpretation may be limited.
+- FX/yield series may have different market conventions; interpret ret_pct carefully.
+
+## Raw table (ground truth)
+| stock            | date       |      Open |      High |       Low |     Close |           Volume |   ret_pct |   range_pct |   close_over_open |   candle_dir |
+|:-----------------|:-----------|----------:|----------:|----------:|----------:|-----------------:|----------:|------------:|------------------:|-------------:|
+| NASDAQ           | 2026-02-06 | 22625.3   | 23088.5   | 22586.4   | 23031.2   |      7.3354e+09  |  1.79406  |    2.21899  |          1.01794  |            1 |
+| S&P500           | 2026-02-06 |  6816.74  |  6944.89  |  6816.74  |  6932.3   |      3.8356e+09  |  1.69523  |    1.87993  |          1.01695  |            1 |
+| DOWJONES         | 2026-02-06 | 49032.2   | 50169.6   | 49032.2   | 50115.7   |      7.72919e+08 |  2.20973  |    2.31982  |          1.0221   |            1 |
+| RUSSELL2000      | 2026-02-06 |  2606.71  |  2676.22  |  2611.29  |  2670.34  |      0           |  2.44103  |    2.49088  |          1.02441  |            1 |
+| USD/KRW          | 2026-02-06 |  1471.68  |  1471.68  |  1461.98  |  1463.4   |      0           | -0.562624 |    0.659116 |          0.994374 |           -1 |
+| Dallor Index/USD | 2026-02-06 |    97.973 |    97.954 |    97.559 |    97.664 |      0           | -0.315391 |    0.403177 |          0.996846 |           -1 |
+| GOLD             | 2026-02-06 |  4800     |  4995.6   |  4670     |  4982.2   | 170711           |  3.79584  |    6.78334  |          1.03796  |            1 |
+| BITCOIN          | 2026-02-06 | 62801.3   | 71159.1   | 60074.8   | 70324.9   |      1.20266e+11 | 11.9801   |   17.6497   |          1.1198   |            1 |
+| US5YT            | 2026-02-06 |     3.746 |     3.767 |     3.732 |     3.755 |      0           |  0.240258 |    0.934326 |          1.0024   |            1 |
+| US10YT           | 2026-02-06 |     4.204 |     4.22  |     4.194 |     4.206 |      0           |  0.047582 |    0.61847  |          1.00048  |            1 |
+| US30YT           | 2026-02-06 |     4.858 |     4.871 |     4.849 |     4.855 |      0           | -0.061759 |    0.452858 |          0.999382 |           -1 |
